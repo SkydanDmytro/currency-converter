@@ -1,0 +1,29 @@
+$header-background-color: #f8f8f8;
+$header-text-color: #333;
+$header-font-family: Arial, sans-serif;
+$header-font-weight: 700;
+$header-font-size: 24px;
+$header-line-height: 1.2;
+
+.header {
+  background-color: $header-background-color;
+  padding: 20px;
+
+  &-header {
+    margin-bottom: 10px;
+  }
+
+  &-text {
+    color: $header-text-color;
+    font-family: $header-font-family;
+    font-weight: $header-font-weight;
+    font-size: $header-font-size;
+    line-height: $header-line-height;
+    margin: 0;
+  }
+
+  p {
+    margin: 0;
+    font-size: 18px;
+  }
+}
