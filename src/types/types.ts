@@ -15,9 +15,10 @@ export interface ICurrencyInfo {
   currencyCode: string;
 }
 
-export type CurrencyConverterProps = {
+export type CurrencySelectorProps = {
   currencyInfo: ICurrencyInfo;
   onUpdate: (_: ICurrencyInfo) => void;
+  currencyRates: ICurrency[];
 };
 
 export type HeaderProps = {

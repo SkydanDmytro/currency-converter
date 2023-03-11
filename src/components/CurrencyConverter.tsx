@@ -1,42 +1,46 @@
-import React, { useState, ChangeEvent } from 'react'
-import { CurrencyConverterProps, } from '../types/types'
-// import { getExchangeRates } from '../utils/utils'
+import React, { useEffect, useState } from 'react'
+import { ICurrency, ICurrencyInfo } from '../types/types'
+import { getConvertedValue, getExchangeRatesToUAH } from '../utils/utils'
+import Header from './Header'
 import "../styles/CurrencyConverter.style.scss"
+import CurrencySelector from './CurrencySelector'
 
+export const CurrencyConverter: React.FC = () => {
 
+	const [currencyRates, setCurrencyRates] = useState<ICurrency[]>([]);
+	const [currencyInfoFrom, setCurrencyInfoFrom] = useState<ICurrencyInfo>({ amount: 1, currencyCode: "UAH" })
+	const [currencyInfoTo, setCurrencyInfoTo] = useState<ICurrencyInfo>({ amount: 1, currencyCode: "USD" })
 
-const CurrencyConverter: React.FC<CurrencyConverterProps> = ({ currencyInfo, onUpdate }) => {
+	const handleUpdate = (type: string) => (value: ICurrencyInfo): void => {
+		if (type === "from") {
+			setCurrencyInfoFrom(value)
+			setCurrencyInfoTo({
+				...currencyInfoTo,
+				amount: getConvertedValue(value, currencyInfoTo, currencyRates)
+			})
+		}
+		if (type === "to") {
+			setCurrencyInfoTo(value)
+			setCurrencyInfoFrom({
+				...currencyInfoFrom,
+				amount: getConvertedValue(value, currencyInfoFrom, currencyRates)
+			})
+		}
+	}
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        onUpdate({
-            ...currencyInfo,
-            amount: Number(event.target.value),
-        })
-    }
-    const handleSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
-        onUpdate({
-            ...currencyInfo,
-            currencyCode: event.target.value,
-        })
-    }
+	useEffect(() => {
+		getExchangeRatesToUAH(setCurrencyRates)
+	}, []);
 
-
-
-    return (
-        <div className='converter'>
-            <label className='converter-label'>
-                Amount:
-                <input className='converter-label-input' value={currencyInfo.amount} onChange={handleInputChange} />
-            </label>
-            <label className='converter-label'>
-                <select className='converter-label-select' value={currencyInfo.currencyCode} onChange={handleSelectChange}>
-                    <option className='converter-label-select-option' value="UAH">UAH</option>
-                    <option className='converter-label-select-option' value="USD">USD</option>
-                    <option className='converter-label-select-option' value="EUR">EUR</option>
-                </select>
-            </label>
-        </div>
-    );
+	return (
+		<div className='converter'>
+			<Header currencyRates={currencyRates} />
+			<div className="converter-selectors">
+				<CurrencySelector currencyInfo={currencyInfoTo} onUpdate={handleUpdate("to")} currencyRates={currencyRates} />
+				<CurrencySelector currencyInfo={currencyInfoFrom} onUpdate={handleUpdate("from")} currencyRates={currencyRates} />
+			</div>
+		</div>
+	)
 }
-export default CurrencyConverter;
 
+export default CurrencyConverter;
